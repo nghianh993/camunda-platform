@@ -5,6 +5,10 @@ on:
     tags:
       # Example: 8.4-gen1
       - 8\.\d+\-gen\d+
+      # Example: 8.6.0-alpha1
+      - 8\.\d+\-alpha\d+
+    branches:
+      - distro-255-aa-fix-release-workflow
 
 jobs:
   release_script:
@@ -39,7 +43,7 @@ jobs:
 
       - name: Set Camunda release tag var
         run: |
-          echo "CAMUNDA_RELEASE_NAME=${GITHUB_REF_NAME}" >> "${GITHUB_ENV}"
+          echo "CAMUNDA_RELEASE_NAME=8.6-alpha1" >> "${GITHUB_ENV}"
 
       - name: Set Camunda application vars
         run: |

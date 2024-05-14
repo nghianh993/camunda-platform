@@ -23,7 +23,7 @@ const TasklistRepoName = "tasklist"
 const IdentityRepoName = "identity"
 const ReleaseNotesTemplateFileName = "release-notes-template.txt"
 
-type CamundaPlatformRelease struct {
+type camundaPlatformRelease struct {
 	Overview             string
 	ZeebeReleaseNotes    string
 	OperateReleaseNotes  string
@@ -38,7 +38,7 @@ type camundaAppVersions struct {
 	Identity string
 }
 
-func GetChangelogReleaseContents(ctx context.Context,
+func getChangelogReleaseContents(ctx context.Context,
 	repoName string,
 	changelogFileName string,
 	repoService *github.RepositoriesService,
@@ -79,7 +79,7 @@ func GetChangelogReleaseContents(ctx context.Context,
 	return mostRecentChangeLogString
 }
 
-func GetLatestReleaseContents(ctx context.Context,
+func getLatestReleaseContents(ctx context.Context,
 	orgName string,
 	repoName string,
 	repoService *github.RepositoriesService,
@@ -143,7 +143,7 @@ func main() {
 
 	log.Debug().Msg("Camunda Github ref = " + camundaReleaseVersion)
 
-	zeebeReleaseNotes := GetLatestReleaseContents(
+	zeebeReleaseNotes := getLatestReleaseContents(
 		ctx,
 		RepoOwner,
 		ZeebeRepoName,
@@ -151,15 +151,15 @@ func main() {
 		camundaAppVersions.Zeebe,
 	)
 
-	operateReleaseNotesContents := GetLatestReleaseContents(
+	operateReleaseNotesContents := getLatestReleaseContents(
 		ctx,
 		RepoOwner,
-		OperateRepoName,
+		"zeebe",
 		camundaRepoService,
-		camundaAppVersions.Operate,
+		"operate-8.5.1",
 	)
 
-	tasklistReleaseNotesContents := GetChangelogReleaseContents(
+	tasklistReleaseNotesContents := getChangelogReleaseContents(
 		ctx,
 		TasklistRepoName,
 		"CHANGELOG.md",
@@ -174,7 +174,7 @@ func main() {
 	camundaCloudGithubClient := github.NewClient(camundaCloudOAuthClient)
 	camundaCloudRepoService := camundaCloudGithubClient.Repositories
 
-	identityReleaseNotesContents := GetLatestReleaseContents(
+	identityReleaseNotesContents := getLatestReleaseContents(
 		ctx,
 		CloudRepoOwner,
 		IdentityRepoName,
@@ -186,7 +186,7 @@ func main() {
 	zeebeRegex := regexp.MustCompile(`# Release 8\..+\n`)
 	zeebeReleaseNotes = zeebeRegex.ReplaceAllString(zeebeReleaseNotes, "")
 
-	platformRelease := CamundaPlatformRelease{
+	platformRelease := camundaPlatformRelease{
 		Overview:             releaseOverview(camundaAppVersions),
 		ZeebeReleaseNotes:    zeebeReleaseNotes,
 		OperateReleaseNotes:  operateReleaseNotesContents,
