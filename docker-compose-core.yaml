@@ -19,6 +19,8 @@ services:
       - "8088:8080"
     environment: # https://docs.camunda.io/docs/self-managed/zeebe-deployment/configuration/environment-variables/
       # allow running with low disk space
+      - CAMUNDA_REST_QUERY_ENABLED=true
+      - CAMUNDA_DATABASE_URL=http://elasticsearch:9200
       - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_CLASSNAME=io.camunda.zeebe.exporter.ElasticsearchExporter
       - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_URL=http://elasticsearch:9200
       # default is 1000, see here: https://github.com/camunda/zeebe/blob/main/exporters/elasticsearch-exporter/src/main/java/io/camunda/zeebe/exporter/ElasticsearchExporterConfiguration.java#L259
@@ -95,11 +97,13 @@ services:
     ports:
       - "8085:8080"
     environment:
-      - ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS=zeebe:26500
+      - CAMUNDA_CLIENT_ZEEBE_REST-ADDRESS=http://zeebe:8080
+      - CAMUNDA_CLIENT_MODE=self-managed
+      - CAMUNDA_CLIENT__ZEEBE_GRPC-ADDRESS=http://zeebe:26500
+      - CAMUNDA_CLIENT_AUTH_USERNAME=demo
+      - CAMUNDA_CLIENT_AUTH_PASSWORD=demo
+      - camunda.client.auth.token-url=null
       - ZEEBE_CLIENT_SECURITY_PLAINTEXT=true
-      - CAMUNDA_OPERATE_CLIENT_URL=http://operate:8080
-      - CAMUNDA_OPERATE_CLIENT_USERNAME=demo
-      - CAMUNDA_OPERATE_CLIENT_PASSWORD=demo
       - management.endpoints.web.exposure.include=health
       - management.endpoint.health.probes.enabled=true
     healthcheck:
